@@ -165,42 +165,44 @@ public class ServiceFeeStatisticController {
                         long feeCreCount = 0;
                         long totalBeforeTax = 0;
                         TrMonthBrMapper dtoBank = trMonthMaps.get(feeDTO.getBankId());
-                        packageFeeCode.add(feeDTO.getShortName());
-                        switch (isTotal) {
-                            // tất cả giao dịch đến
-                            case 0:
-                                long credit = dtoBank.getCredit();
-                                int creCount = dtoBank.getCreCount();
-                                feeCredit = Math
-                                        .round(feeDTO.getPercentFee() * credit / 100);
-                                feeCreCount = creCount * feeDTO.getTransFee();
-                                totalBeforeTax = Math
-                                        .round(feeCredit + feeCreCount -
-                                        feeDTO.getAnnualFee());
-                                if (totalBeforeTax < 0) {
-                                    totalBeforeTax = 0;
-                                }
-                                totalAmount += Math
-                                        .round(totalBeforeTax *  (1 + feeDTO.getVat() / 100));
-                                break;
-                            case 1:
-                                long recon = dtoBank.getRecon();
-                                long reCount = dtoBank.getRecCount();
-                                feeCredit = Math
-                                        .round(feeDTO.getPercentFee() * recon / 100);
-                                feeCreCount = reCount * feeDTO.getTransFee();
-                                totalBeforeTax = Math
-                                        .round(feeCredit + feeCreCount -
-                                                feeDTO.getAnnualFee());
-                                if (totalBeforeTax < 0) {
-                                    totalBeforeTax = 0;
-                                }
-                                totalAmount += Math
-                                        .round(totalBeforeTax *  (1 + feeDTO.getVat() / 100));
-                                break;
-                            default:
-                                break;
+                        if (dtoBank != null) {
+                            switch (isTotal) {
+                                // tất cả giao dịch đến
+                                case 0:
+                                    long credit = dtoBank.getCredit();
+                                    int creCount = dtoBank.getCreCount();
+                                    feeCredit = Math
+                                            .round(feeDTO.getPercentFee() * credit / 100);
+                                    feeCreCount = creCount * feeDTO.getTransFee();
+                                    totalBeforeTax = Math
+                                            .round(feeCredit + feeCreCount -
+                                                    feeDTO.getAnnualFee());
+                                    if (totalBeforeTax < 0) {
+                                        totalBeforeTax = 0;
+                                    }
+                                    totalAmount += Math
+                                            .round(totalBeforeTax *  (1 + feeDTO.getVat() / 100));
+                                    break;
+                                case 1:
+                                    long recon = dtoBank.getRecon();
+                                    long reCount = dtoBank.getRecCount();
+                                    feeCredit = Math
+                                            .round(feeDTO.getPercentFee() * recon / 100);
+                                    feeCreCount = reCount * feeDTO.getTransFee();
+                                    totalBeforeTax = Math
+                                            .round(feeCredit + feeCreCount -
+                                                    feeDTO.getAnnualFee());
+                                    if (totalBeforeTax < 0) {
+                                        totalBeforeTax = 0;
+                                    }
+                                    totalAmount += Math
+                                            .round(totalBeforeTax *  (1 + feeDTO.getVat() / 100));
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
+                        packageFeeCode.add(feeDTO.getShortName());
                     }
                     // get midInfo:
                     IMidInfoDTO info = midInfoService.getInfoById(mid);
