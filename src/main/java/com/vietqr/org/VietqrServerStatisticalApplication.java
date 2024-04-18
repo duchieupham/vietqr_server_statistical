@@ -4,8 +4,8 @@ import com.vietqr.org.security.JWTAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
@@ -20,10 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 @EnableWebMvc
-public class VietqrServerStatisticalApplication {
+public class VietqrServerStatisticalApplication extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(VietqrServerStatisticalApplication.class, args);
