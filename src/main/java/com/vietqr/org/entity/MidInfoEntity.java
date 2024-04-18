@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "mid_info")
+@Table(name = "midInfo")
 public class MidInfoEntity {
     // mid
     @Id
@@ -14,7 +14,7 @@ public class MidInfoEntity {
     private String id;
     @Column(name = "tids", columnDefinition = "JSON")
     private String tids;
-    @Column(name = "service_type", columnDefinition = "JSON")
+    @Column(name = "serviceType", columnDefinition = "JSON")
     private String serviceType;
     @Column(name = "info", columnDefinition = "JSON")
     private String info;

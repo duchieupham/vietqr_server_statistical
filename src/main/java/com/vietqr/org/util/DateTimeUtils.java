@@ -14,13 +14,6 @@ public class DateTimeUtils {
     private static final String DateTimeYYYYMMdd = "yyyyMMdd";
     private static final String DateTimeYYYY_MM_dd = "dd-MM-yyyy";
     private static final Logger logger = Logger.getLogger(DateTimeUtils.class);
-    public static String generateRandomId(int length) {
-        char[] randomChars = new char[length];
-        for (int i = 0; i < randomChars.length; i++) {
-            randomChars[i] = CHARACTERS.charAt(SECURE_RANDOM.nextInt(CHARACTERS.length()));
-        }
-        return new String(randomChars);
-    }
 
     public static String parseToStringFormat(String time) {
         String result = "";

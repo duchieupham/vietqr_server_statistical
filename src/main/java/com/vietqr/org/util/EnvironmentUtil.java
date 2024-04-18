@@ -6,4 +6,8 @@ public class EnvironmentUtil {
     public static String getDefaultServiceFee() {
         return DEFAULT_SERVICE_FEE;
     }
+
+    public static boolean isProduction() {
+        return IS_PRODUCTION;
+    }
 }

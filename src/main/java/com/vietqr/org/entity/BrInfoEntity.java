@@ -6,19 +6,19 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "br_info")
+@Table(name = "brInfo")
 public class BrInfoEntity {
     // br
     @Id
     @Column(name = "id")
     private String id;
-    @Column(name = "bank_account")
+    @Column(name = "bankAccount")
     private String bankAccount;
-    @Column(name = "bank_code")
+    @Column(name = "bankCode")
     private String bankCode;
-    @Column(name = "user_bank_name")
+    @Column(name = "userBankName")
     private String userBankName;
-    @Column(name = "bank_short_name")
+    @Column(name = "bankShortName")
     private String bankShortName;
     @Column(name = "flow")
     private int flow;

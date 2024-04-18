@@ -1,6 +1,6 @@
 package com.vietqr.org.mapper;
 
-public class TrMonthBrDTO {
+public class TrMonthBrMapper {
     private String brId;
     private long debit;
     private long recon;
@@ -11,11 +11,11 @@ public class TrMonthBrDTO {
     private int creCount;
     private int recCount;
 
-    public TrMonthBrDTO() {
+    public TrMonthBrMapper() {
     }
 
-    public TrMonthBrDTO(String brId, long debit, long recon, long total, long credit,
-                        int deCount, int toCount, int creCount, int recCount) {
+    public TrMonthBrMapper(String brId, long debit, long recon, long total, long credit,
+                           int deCount, int toCount, int creCount, int recCount) {
         this.brId = brId;
         this.debit = debit;
         this.recon = recon;

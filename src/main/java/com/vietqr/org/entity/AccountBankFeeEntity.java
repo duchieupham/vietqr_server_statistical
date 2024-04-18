@@ -22,15 +22,6 @@ public class AccountBankFeeEntity implements Serializable {
     @Column(name = "bankId")
     private String bankId;
 
-    @Column(name = "serviceFeeId")
-    private String serviceFeeId;
-
-    @Column(name = "startDate")
-    private String startDate;
-
-    @Column(name = "endDate")
-    private String endDate;
-
     @Column(name = "shortName")
     private String shortName;
 
@@ -41,10 +32,6 @@ public class AccountBankFeeEntity implements Serializable {
     // (monthly fee, but collect money by 3/6/9/12 months)
     @Column(name = "annualFee")
     private Long annualFee;
-
-    // 3/6/9/12 months
-    @Column(name = "monthlyCycle")
-    private Integer monthlyCycle;
 
     // (fee per transaction)
     @Column(name = "transFee")
@@ -64,18 +51,13 @@ public class AccountBankFeeEntity implements Serializable {
         super();
     }
 
-    public AccountBankFeeEntity(String id, String bankId, String serviceFeeId, String startDate, String endDate,
-                                String shortName, Long activeFee, Long annualFee, Integer monthlyCycle, Long transFee, Double percentFee,
-                                Integer countingTransType, Double vat) {
+    public AccountBankFeeEntity(String id, String bankId, String shortName, Long activeFee,
+                                Long annualFee, Long transFee, Double percentFee, Integer countingTransType, Double vat) {
         this.id = id;
         this.bankId = bankId;
-        this.serviceFeeId = serviceFeeId;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.shortName = shortName;
         this.activeFee = activeFee;
         this.annualFee = annualFee;
-        this.monthlyCycle = monthlyCycle;
         this.transFee = transFee;
         this.percentFee = percentFee;
         this.countingTransType = countingTransType;
@@ -96,30 +78,6 @@ public class AccountBankFeeEntity implements Serializable {
 
     public void setBankId(String bankId) {
         this.bankId = bankId;
-    }
-
-    public String getServiceFeeId() {
-        return serviceFeeId;
-    }
-
-    public void setServiceFeeId(String serviceFeeId) {
-        this.serviceFeeId = serviceFeeId;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
     }
 
     public String getShortName() {
@@ -144,14 +102,6 @@ public class AccountBankFeeEntity implements Serializable {
 
     public void setAnnualFee(Long annualFee) {
         this.annualFee = annualFee;
-    }
-
-    public Integer getMonthlyCycle() {
-        return monthlyCycle;
-    }
-
-    public void setMonthlyCycle(Integer monthlyCycle) {
-        this.monthlyCycle = monthlyCycle;
     }
 
     public Long getTransFee() {

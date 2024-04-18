@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tr_date")
+@Table(name = "trDate")
 public class TrDateEntity {
     @Id
     @Column(name = "id")
@@ -19,7 +19,7 @@ public class TrDateEntity {
     private String date;
     @Column(name = "sum", columnDefinition = "JSON")
     private String sum;
-    @Column(name = "sum_mid", columnDefinition = "JSON")
+    @Column(name = "sumMid", columnDefinition = "JSON")
     private String sumMid;
 
     public TrDateEntity() {

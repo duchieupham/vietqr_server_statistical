@@ -271,20 +271,20 @@ public class TransactionStatisticController {
                 TransAdminStatisticDTO dto = new TransAdminStatisticDTO();
                 String timeStr = DateTimeUtils.parseToStringFormat(item.getTime());
                 dto.setTime(timeStr);
-                SumMapper mapper1 = new SumMapper();
+                SumMapper sumMapperDTO = new SumMapper();
                 try {
-                    mapper1 = mapper.readValue(item.getTransSum(), SumMapper.class);
+                    sumMapperDTO = mapper.readValue(item.getTransSum(), SumMapper.class);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
-                dto.setCredit(mapper1.getCredit());
-                dto.setDebit(mapper1.getDebit());
-                dto.setRecon(mapper1.getRecon());
-                dto.setTotal(mapper1.getTotal());
-                dto.setCreCount(mapper1.getCreCount());
-                dto.setDeCount(mapper1.getDeCount());
-                dto.setToCount(mapper1.getToCount());
-                dto.setReCount(mapper1.getRecCount());
+                dto.setCredit(sumMapperDTO.getCredit());
+                dto.setDebit(sumMapperDTO.getDebit());
+                dto.setRecon(sumMapperDTO.getRecon());
+                dto.setTotal(sumMapperDTO.getTotal());
+                dto.setCreCount(sumMapperDTO.getCreCount());
+                dto.setDeCount(sumMapperDTO.getDeCount());
+                dto.setToCount(sumMapperDTO.getToCount());
+                dto.setReCount(sumMapperDTO.getRecCount());
                 return dto;
             }).collect(Collectors.toList());
             PageDTO pageDTO = new PageDTO();

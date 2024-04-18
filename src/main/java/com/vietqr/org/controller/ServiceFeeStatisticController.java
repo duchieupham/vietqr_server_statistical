@@ -146,9 +146,9 @@ public class ServiceFeeStatisticController {
                 Map<String, List<ICustomerBankFeeDTO>> cusMaps = customerBankFeeDTOS.stream()
                         .collect(Collectors.groupingBy(ICustomerBankFeeDTO::getCustomerSyncId));
                 String brBanks = trMonthService.getTrMonthBr(month);
-                List<TrMonthBrDTO> banks = mapper.readValue(brBanks, new TypeReference<List<TrMonthBrDTO>>() {});
-                Map<String, TrMonthBrDTO> trMonthMaps = banks.stream()
-                        .collect(Collectors.toMap(TrMonthBrDTO::getBrId,
+                List<TrMonthBrMapper> banks = mapper.readValue(brBanks, new TypeReference<List<TrMonthBrMapper>>() {});
+                Map<String, TrMonthBrMapper> trMonthMaps = banks.stream()
+                        .collect(Collectors.toMap(TrMonthBrMapper::getBrId,
                                 Function.identity(),
                                 (existing, replacement) -> existing));
                 long feeTotal = 0L;
@@ -164,7 +164,7 @@ public class ServiceFeeStatisticController {
                         long feeCredit = 0;
                         long feeCreCount = 0;
                         long totalBeforeTax = 0;
-                        TrMonthBrDTO dtoBank = trMonthMaps.get(feeDTO.getBankId());
+                        TrMonthBrMapper dtoBank = trMonthMaps.get(feeDTO.getBankId());
                         packageFeeCode.add(feeDTO.getShortName());
                         switch (isTotal) {
                             // tất cả giao dịch đến
