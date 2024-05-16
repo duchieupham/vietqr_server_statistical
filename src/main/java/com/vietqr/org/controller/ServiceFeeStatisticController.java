@@ -72,19 +72,10 @@ public class ServiceFeeStatisticController {
                     itemNoFilters = mapper.readValue(dto.getFees(), new TypeReference<List<ServiceFeeDTO>>() {});
                     int platform = Integer.parseInt(value);
                     switch (platform) {
-                        // API Service
+                        // Phần mềm ViệtQR
                         case 0:
-                            items = itemNoFilters.stream().filter(item -> item.getPlatformPackage().contains("API service"))
-                                    .collect(Collectors.toList());
-                            break;
-                        // Ecomerce
-                        case 1:
-                            items = itemNoFilters.stream().filter(item -> item.getPlatformPackage().contains("Ecommerce"))
-                                    .collect(Collectors.toList());
-                            break;
-                        // Web app
-                        case 2:
-                            items = itemNoFilters.stream().filter(item -> item.getPlatformPackage().contains("Web-app"))
+                            items = itemNoFilters.stream().filter(item -> item.getPackageFeeName()
+                                            .contains(EnvironmentUtil.getDefaultServiceFee()))
                                     .collect(Collectors.toList());
                             break;
                         case 9:
@@ -93,10 +84,12 @@ public class ServiceFeeStatisticController {
                             break;
                     }
                     totalElement = items.size();
-                    if (totalElement % size == 0 && totalElement > 0) {
-                        itemWithPaging = items.subList(offset, size);
-                    } else if (totalElement % size != 0 && totalElement > 0) {
-                        itemWithPaging = items.subList(offset, totalElement % size);
+                    PageFilterDTO pageFilterDTO = getPageFIlterDTO(totalElement, size, page);
+                    if (pageFilterDTO.getStartIdx() == -1) {
+                        itemWithPaging = new ArrayList<>();
+                    } else {
+                        itemWithPaging = items.subList(pageFilterDTO.getStartIdx(),
+                                pageFilterDTO.getEndIdx());
                     }
                     totalElement = items.size();
                     data.setItems(itemWithPaging);
@@ -241,5 +234,15 @@ public class ServiceFeeStatisticController {
             httpStatus = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<>(result, httpStatus);
+    }
+
+    private PageFilterDTO getPageFIlterDTO(int totalElements, int size, int page) {
+        int startIndex = (page - 1) * size;
+        int endIndex = Math.min(startIndex + size, totalElements);
+        if (startIndex >= totalElements) {
+            startIndex = -1;
+            endIndex = -1;
+        }
+        return new PageFilterDTO(startIndex, endIndex);
     }
 }
