@@ -16,7 +16,7 @@ public interface MidInfoService {
 
     List<IMidInfoDTO> getInfo(String time, int offset, int size);
 
-    List<IMidInfoDTO> getInfoByNameByMonth(String time, String value, int offset, int size);
+    List<IMidInfoDTO>  getInfoByNameByMonth(String time, String value, int offset, int size);
 
     List<IMidInfoDTO> getInfoByVsoByMonth(String time, String value, int offset, int size);
 
