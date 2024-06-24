@@ -15,10 +15,9 @@
 	<name>vietqr_server_statistical</name>
 	<description>VietQR VN Statistical</description>
 	<properties>
+		<grpc.version>1.58.0</grpc.version>
+		<protobuf.version>3.23.4</protobuf.version>
 		<protobuf-plugin.version>0.6.1</protobuf-plugin.version>
-		<protobuf.version>3.6.1</protobuf.version>
-		<grpc.version>1.15.1</grpc.version>
-		<os.detected.classifier>${os.detected.classifier}</os.detected.classifier>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -79,22 +78,40 @@
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-netty-shaded</artifactId>
-			<version>1.15.1</version>
+			<version>1.58.0</version>
 		</dependency>
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-protobuf</artifactId>
-			<version>1.15.1</version>
+			<version>${grpc.version}</version>
 		</dependency>
+
+
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-stub</artifactId>
-			<version>1.15.1</version>
+			<version>${grpc.version}</version>
 		</dependency>
 
-
+		<!-- Protocol Buffers -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.devh</groupId>
+			<artifactId>grpc-client-spring-boot-starter</artifactId>
+			<version>2.13.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-bom</artifactId>
+			<version>${grpc.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<extensions>
 			<extension>
@@ -105,13 +122,24 @@
 		</extensions>
 		<plugins>
 			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>
-				<version>0.6.1</version>
+				<version>${protobuf-plugin.version}</version>
 				<configuration>
-					<protocArtifact>com.google.protobuf:protoc:3.17.3:exe:${os.detected.classifier}</protocArtifact>
+					<protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
 					<pluginId>grpc-java</pluginId>
-					<pluginArtifact>io.grpc:protoc-gen-grpc-java:1.42.0:exe:${os.detected.classifier}</pluginArtifact>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
 				</configuration>
 				<executions>
 					<execution>
@@ -122,9 +150,39 @@
 					</execution>
 				</executions>
 			</plugin>
-
-
 		</plugins>
 	</build>
+
+<!--	<build>-->
+<!--		<extensions>-->
+<!--			<extension>-->
+<!--				<groupId>kr.motd.maven</groupId>-->
+<!--				<artifactId>os-maven-plugin</artifactId>-->
+<!--				<version>1.7.0</version>-->
+<!--			</extension>-->
+<!--		</extensions>-->
+<!--		<plugins>-->
+<!--			<plugin>-->
+<!--				<groupId>org.xolstice.maven.plugins</groupId>-->
+<!--				<artifactId>protobuf-maven-plugin</artifactId>-->
+<!--				<version>0.6.1</version>-->
+<!--				<configuration>-->
+<!--					<protocArtifact>com.google.protobuf:protoc:3.17.3:exe:${os.detected.classifier}</protocArtifact>-->
+<!--					<pluginId>grpc-java</pluginId>-->
+<!--					<pluginArtifact>io.grpc:protoc-gen-grpc-java:1.42.0:exe:${os.detected.classifier}</pluginArtifact>-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<goals>-->
+<!--							<goal>compile</goal>-->
+<!--							<goal>compile-custom</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+
+
+<!--		</plugins>-->
+<!--	</build>-->
 
 </project>

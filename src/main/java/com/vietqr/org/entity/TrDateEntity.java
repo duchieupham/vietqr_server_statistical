@@ -27,11 +27,13 @@ public class TrDateEntity {
     @Column(name = "brCount", columnDefinition = "JSON")
     private String brCount;
 
+    @Column(name = "sumUser", columnDefinition = "JSON")
+    private String sumUser;
     public TrDateEntity() {
     }
 
     public TrDateEntity(String id, String mids, String tids,
-                        String date, String sum, String sumMid, String trs) {
+                        String date, String sum, String sumMid, String trs, String sumUser) {
         this.id = id;
         this.mids = mids;
         this.tids = tids;
@@ -39,6 +41,7 @@ public class TrDateEntity {
         this.sum = sum;
         this.sumMid = sumMid;
         this.trs = trs;
+        this.sumUser = sumUser;
     }
 
     public String getBrCount() {
@@ -103,5 +106,13 @@ public class TrDateEntity {
 
     public void setTrs(String trs) {
         this.trs = trs;
+    }
+
+    public String getSumUser() {
+        return sumUser;
+    }
+
+    public void setSumUser(String sumUser) {
+        this.sumUser = sumUser;
     }
 }
