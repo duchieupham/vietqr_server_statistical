@@ -23,4 +23,5 @@ public interface TrDateService {
 //    List<ITransSumDTO> getTranSumStatistic(String time, int offset, int size);
 
     void saveUserStatistics(long count, String date);
+    void saveUserStatistics(long count, String sumUserJson, String date);
 }

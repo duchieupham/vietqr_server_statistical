@@ -13,10 +13,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+
 
 @Service
 public class TrDateServiceImpl implements TrDateService {
+    private static final Logger logger = LoggerFactory.getLogger(TrDateService.class);
 
     @Autowired
     private TrDateRepository repo;
@@ -71,6 +73,33 @@ public class TrDateServiceImpl implements TrDateService {
             System.out.println("Successfully saved user statistics");
         } catch (Exception e) {
             System.out.println("Failed to save user statistics");
+        }
+    }
+    @Override
+    public void saveUserStatistics(long count, String sumUserJson, String date) {
+        logger.info("Saving user statistics: count={}, date={}", count, date);
+
+        // Chuyển đổi định dạng ngày
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate localDate = LocalDate.parse(date, inputFormatter);
+        String formattedDate = localDate.format(outputFormatter);
+
+        TrDateEntity trDateEntity = new TrDateEntity();
+        trDateEntity.setId(UUID.randomUUID().toString());
+        trDateEntity.setMids("{}");
+        trDateEntity.setTids("{}");
+        trDateEntity.setSum("{}");
+        trDateEntity.setBrCount("{}");
+        trDateEntity.setSumMid("{}");
+        trDateEntity.setSumUser(sumUserJson);  // Lưu sumUserJson
+        trDateEntity.setDate(formattedDate); // Lưu ngày định dạng yyyyMMdd
+
+        try {
+            repo.save(trDateEntity);  // Đảm bảo dòng này được thực thi mà không có lỗi
+            logger.info("Successfully saved user statistics");
+        } catch (Exception e) {
+            logger.error("Failed to save user statistics", e);
         }
     }
 }
