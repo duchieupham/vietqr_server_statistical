@@ -5,7 +5,8 @@ option java_package = "com.example.grpc";
 option java_outer_classname = "UserServiceProto";
 
 service UserService {
-  rpc GetRegisteredUsers (GetUsersRequest) returns (GetUsersResponse);
+  rpc GetRegisteredUsers (GetUsersRequest) returns (stream User);
+  rpc GetRegisteredUsersInMonth (GetUsersRequest) returns (stream User);
 }
 
 message GetUsersRequest {
@@ -17,9 +18,6 @@ message User {
   string phoneNo = 2;
   string email = 3;
   int64 time = 4;
+  string sumUserJson = 5;
 }
 
-message GetUsersResponse {
-  repeated User users = 1;
-  string sumUser = 2;
-}

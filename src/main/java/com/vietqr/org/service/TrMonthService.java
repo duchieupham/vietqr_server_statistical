@@ -21,4 +21,6 @@ public interface TrMonthService {
     ITransMonthDTO getTranMidStatistic(String month);
 
     String getTrMonthBr(String month);
+
+    void saveUserStatistics(long count, String sumUserJson, String month);
 }

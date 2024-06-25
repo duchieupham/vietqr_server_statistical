@@ -1,58 +1,96 @@
 package com.vietqr.org.client;
 
 import com.example.grpc.GetUsersRequest;
-import com.example.grpc.GetUsersResponse;
 import com.example.grpc.User;
 import com.example.grpc.UserServiceGrpc;
 import io.grpc.ManagedChannel;
+import io.grpc.stub.StreamObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 
 public class UserClient {
-    private final UserServiceGrpc.UserServiceBlockingStub userServiceBlockingStub;
-    private GetUsersResponse lastResponse;
-    private GetUsersResponse response;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserClient.class);
+    private final UserServiceGrpc.UserServiceStub userServiceStub;
+    private String sumUserJson;
+
     public UserClient(ManagedChannel channel) {
-        userServiceBlockingStub = UserServiceGrpc.newBlockingStub(channel);
+        userServiceStub = UserServiceGrpc.newStub(channel);
     }
 
-//    public List<User> getRegisteredUsers(String date) {
-//        GetUsersRequest request = GetUsersRequest.newBuilder().setDate(date).build();
-//        System.out.println("Sending request to server with date: " + date);
-//
-//        try {
-//            response = userServiceBlockingStub.getRegisteredUsers(request);
-//        } catch (Exception e) {
-//            System.err.println("Error occurred: " + e.getMessage());
-//            e.printStackTrace();
-//            throw e;
-//        }
-//        System.out.println("Received response from server");
-//        return response.getUsersList();
-//    }
-public List<User> getRegisteredUsers(String date) {
-    GetUsersRequest request = GetUsersRequest.newBuilder().setDate(date).build();
-    System.out.println("Sending request to server with date: " + date);
-    try {
-        lastResponse = userServiceBlockingStub.getRegisteredUsers(request);
-        System.out.println("Received response from server");
+    public List<User> getRegisteredUsers(String date) throws InterruptedException {
+        GetUsersRequest request = GetUsersRequest.newBuilder().setDate(date).build();
+        CountDownLatch latch = new CountDownLatch(1);
+        List<User> users = new ArrayList<>();
 
-        // Xử lý trường sumUser
-        String sumUserJson = lastResponse.getSumUser();
-        System.out.println("Sum User JSON: " + sumUserJson);
-    } catch (Exception e) {
-        System.err.println("Error occurred: " + e.getMessage());
-        e.printStackTrace();
-        throw e;
+        userServiceStub.getRegisteredUsers(request, new StreamObserver<User>() {
+            @Override
+            public void onNext(User user) {
+                if ("summary".equals(user.getId())) {
+                    sumUserJson = user.getSumUserJson();
+                } else {
+                    users.add(user);
+                }
+                logger.info("Received user: " + user);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                logger.error("Error: ", t);
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                logger.info("Stream completed");
+                latch.countDown();
+            }
+        });
+
+        latch.await(1, TimeUnit.MINUTES);
+        return users;
     }
-    return lastResponse.getUsersList();
-}
+
+    public List<User> getRegisteredUsersInMonth(String month) throws InterruptedException {
+        GetUsersRequest request = GetUsersRequest.newBuilder().setDate(month).build();
+        CountDownLatch latch = new CountDownLatch(1);
+        List<User> users = new ArrayList<>();
+
+        userServiceStub.getRegisteredUsersInMonth(request, new StreamObserver<User>() {
+            @Override
+            public void onNext(User user) {
+                if ("summary".equals(user.getId())) {
+                    sumUserJson = user.getSumUserJson();
+                } else {
+                    users.add(user);
+                }
+                logger.info("Received user: " + user);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                logger.error("Error: ", t);
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                logger.info("Stream completed");
+                latch.countDown();
+            }
+        });
+
+        latch.await(1, TimeUnit.MINUTES);
+        return users;
+    }
 
     public String getSumUserJson() {
-        if (lastResponse != null) {
-            return lastResponse.getSumUser();
-        }
-        return "";
+        return sumUserJson;
     }
 }
