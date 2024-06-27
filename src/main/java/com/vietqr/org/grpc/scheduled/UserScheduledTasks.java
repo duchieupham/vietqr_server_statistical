@@ -1,5 +1,8 @@
-package com.vietqr.org.service;
+package com.vietqr.org.grpc.scheduled;
 
+import com.vietqr.org.grpc.reactive.ReactiveUserService;
+import com.vietqr.org.service.TrDateService;
+import com.vietqr.org.service.TrMonthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,22 +13,19 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 
 @Service
-public class ScheduledTasks {
-    private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-    private final ReactiveUserService reactiveUserService;
-    private final TrDateService trDateService;
-    private final TrMonthService trMonthService;
-
+public class UserScheduledTasks {
+    private static final Logger logger = LoggerFactory.getLogger(UserScheduledTasks.class);
     @Autowired
-    public ScheduledTasks(ReactiveUserService reactiveUserService, TrDateService trDateService, TrMonthService trMonthService) {
-        this.reactiveUserService = reactiveUserService;
-        this.trDateService = trDateService;
-        this.trMonthService = trMonthService;
-    }
+    private ReactiveUserService reactiveUserService;
+    @Autowired
+    private  TrDateService trDateService;
+    @Autowired
+    private  TrMonthService trMonthService;
 
-    // TAT CA DEU DE 30S DE DONG BO
-    @Scheduled(cron = "0 * * * * ?")
-    public void syncUserStatistics() {
+
+    //@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void syncDailyUserStatistics() {
         String yesterday = LocalDate.now().minusDays(1).toString();
 
         reactiveUserService.getRegisteredUsers(yesterday).subscribe(users -> {
@@ -37,7 +37,8 @@ public class ScheduledTasks {
         }, throwable -> logger.error("Failed to fetch registered users: " + throwable.getMessage()));
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    //@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 1 * ?") // Chạy vào lúc 00:00 ngày đầu tiên của mỗi tháng
     public void syncMonthlyUserStatistics() {
         YearMonth lastMonth = YearMonth.now().minusMonths(1);
         String lastMonthString = lastMonth.toString();

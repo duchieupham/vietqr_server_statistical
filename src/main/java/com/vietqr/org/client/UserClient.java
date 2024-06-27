@@ -1,8 +1,6 @@
 package com.vietqr.org.client;
 
-import com.example.grpc.GetUsersRequest;
-import com.example.grpc.User;
-import com.example.grpc.UserServiceGrpc;
+import com.example.grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
@@ -89,6 +87,8 @@ public class UserClient {
         latch.await(1, TimeUnit.MINUTES);
         return users;
     }
+
+
 
     public String getSumUserJson() {
         return sumUserJson;
