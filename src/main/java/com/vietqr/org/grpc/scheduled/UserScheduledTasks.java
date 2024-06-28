@@ -38,7 +38,7 @@ public class UserScheduledTasks {
     }
 
     //@Scheduled(cron = "0 * * * * ?")
-    @Scheduled(cron = "0 0 0 1 * ?") // Chạy vào lúc 00:00 ngày đầu tiên của mỗi tháng
+   // @Scheduled(cron = "0 0 0 1 * ?") // Chạy vào lúc 00:00 ngày đầu tiên của mỗi tháng
     public void syncMonthlyUserStatistics() {
         YearMonth lastMonth = YearMonth.now().minusMonths(1);
         String lastMonthString = lastMonth.toString();
@@ -51,6 +51,9 @@ public class UserScheduledTasks {
             trMonthService.saveUserStatistics(count, sumUserJson, lastMonthString);
         }, throwable -> logger.error("Failed to fetch registered users: " + throwable.getMessage()));
     }
+
+
+
 }
 
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +45,10 @@ public class ReactiveUserService {
                     userClient.getRegisteredUsers(date);
                     logger.info("Retrieced users and sumUserJson: " + userClient.getSumUserJson());
                     saveUserRegistrationDay(date, userClient.getSumUserJson());
+
+                    long dailyCount = parseUserRegister(userClient.getSumUserJson());
+                    updateUserRegistrationMonth(date, dailyCount);
+
                     return Collections.<User>emptyList(); // Trả về danh sách các User từ UserClient
                 })
                 .subscribeOn(Schedulers.boundedElastic())
@@ -80,6 +85,23 @@ public class ReactiveUserService {
         userRegisterDayRepository.save(entity);
     }
 
+    private void updateUserRegistrationMonth(String day, long dailyCount) {
+        YearMonth yearMonth = YearMonth.now();
+        String month = yearMonth.toString();
+
+        UserRegisterMonthEntity monthEntity = userRegisterMonthRepository.findByMonth(month);
+        if (monthEntity == null) {
+            monthEntity = new UserRegisterMonthEntity();
+            monthEntity.setId(UUID.randomUUID().toString());
+            monthEntity.setMonth(month);
+            monthEntity.setUserCount(String.valueOf(dailyCount));
+        } else {
+            monthEntity.setUserCount(monthEntity.getUserCount() + dailyCount);
+        }
+
+        userRegisterMonthRepository.save(monthEntity);
+        logger.info("Updated monthly user registration statistics for month: " + month + " with total count: " + monthEntity.getUserCount());
+    }
     private void saveUserRegistrationMonth(String month, String sumUserJson) {
         logger.info("Saving user registration statistics for month: " + month + " with sumUserJson: " + sumUserJson);
 

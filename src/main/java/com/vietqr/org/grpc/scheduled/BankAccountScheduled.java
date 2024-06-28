@@ -26,11 +26,11 @@ public class BankAccountScheduled {
         this.accountBankMonthRepository = accountBankMonthRepository;
     }
 
-
-    @Scheduled(cron = "0 0 0 1 * ?") // Chạy vào lúc 00:00 ngày đầu tiên của mỗi tháng
+    //@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "59 59 23 L * ?") // Chạy vào 23:59 ngày cuối cùng của mỗi tháng
     public void syncMonthlyBankAccountStatistics() throws InterruptedException {
-        YearMonth lastMonth = YearMonth.now().minusMonths(1);
-        String lastMonthString = lastMonth.toString();
+        YearMonth currentMonth  = YearMonth.now();
+        String lastMonthString = currentMonth.toString();
 
         reactiveBankAccountService.getBankAccountStatistics(lastMonthString)
                 .subscribe(response -> {
