@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "UserRegisterMonth")
-public class UserRegisterMonthEntity implements Serializable {
+public class UsMonthEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Column(name = "id")
@@ -18,10 +18,10 @@ public class UserRegisterMonthEntity implements Serializable {
     @Column(name = "userCount")
     private String userCount;
 
-    public UserRegisterMonthEntity() {
+    public UsMonthEntity() {
     }
 
-    public UserRegisterMonthEntity(String id, String month, String userCount) {
+    public UsMonthEntity(String id, String month, String userCount) {
         this.id = id;
         this.month = month;
         this.userCount = userCount;

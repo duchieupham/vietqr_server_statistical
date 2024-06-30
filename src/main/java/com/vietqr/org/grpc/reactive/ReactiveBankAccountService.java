@@ -11,13 +11,8 @@ import reactor.core.scheduler.Schedulers;
 
 @Service
 public class ReactiveBankAccountService {
-
-    private final BankAccountClient bankAccountClient;
-
     @Autowired
-    public ReactiveBankAccountService(BankAccountClient bankAccountClient) {
-        this.bankAccountClient = bankAccountClient;
-    }
+    private BankAccountClient bankAccountClient;
 
     @CircuitBreaker(name = "bankAccountService", fallbackMethod = "fallbackGetBankAccountStatistics")
     @RateLimiter(name = "bankAccountService")

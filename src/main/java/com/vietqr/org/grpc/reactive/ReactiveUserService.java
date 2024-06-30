@@ -2,10 +2,10 @@ package com.vietqr.org.grpc.reactive;
 
 import com.example.grpc.User;
 import com.vietqr.org.client.UserClient;
-import com.vietqr.org.entity.UserRegisterDayEntity;
-import com.vietqr.org.entity.UserRegisterMonthEntity;
-import com.vietqr.org.repository.UserRegisterDayRepository;
-import com.vietqr.org.repository.UserRegisterMonthRepository;
+import com.vietqr.org.entity.UsDateEntity;
+import com.vietqr.org.entity.UsMonthEntity;
+import com.vietqr.org.repository.UsDateRepository;
+import com.vietqr.org.repository.UsMonthRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.json.JSONException;
@@ -25,18 +25,13 @@ import java.util.UUID;
 @Service
 public class ReactiveUserService {
     private static final Logger logger = LoggerFactory.getLogger(ReactiveUserService.class);
-
-    private final UserClient userClient;
     @Autowired
-    private UserRegisterMonthRepository userRegisterMonthRepository;
-
+    private  UserClient userClient;
     @Autowired
-    private UserRegisterDayRepository userRegisterDayRepository;
+    private UsMonthRepository usMonthRepository;
 
     @Autowired
-    public ReactiveUserService(UserClient userClient) {
-        this.userClient = userClient;
-    }
+    private UsDateRepository usDateRepository;
 
     @CircuitBreaker(name = "userService", fallbackMethod = "fallbackGetRegisteredUsers")
     @RateLimiter(name = "userService")
@@ -58,22 +53,6 @@ public class ReactiveUserService {
                 });
     }
 
-    @CircuitBreaker(name = "userService", fallbackMethod = "fallbackGetRegisteredUsersInMonth")
-    @RateLimiter(name = "userService")
-    public Mono<List<User>> getRegisteredUsersInMonth(String month) {
-        return Mono.fromCallable(() -> {
-                    userClient.getRegisteredUsersInMonth(month);
-                    logger.info("Retrieved users and sumUserJson: " + userClient.getSumUserJson());
-                    saveUserRegistrationMonth(month, userClient.getSumUserJson());
-                    return Collections.<User>emptyList(); // or return the processed list
-                })
-                .subscribeOn(Schedulers.boundedElastic())
-                .onErrorResume(throwable -> {
-                    System.err.println("Error occurred: " + throwable.getMessage());
-                    return Mono.just(Collections.<User>emptyList());
-                });
-    }
-
     private void saveUserRegistrationDay(String day, String sumUserJson) {
         logger.info("Saving user registration statistics for day: " + day + " with sumUserJson: " + sumUserJson);
         //Parse user_register from sumUserJson
@@ -81,38 +60,27 @@ public class ReactiveUserService {
         logger.info("Parsed user_register: " + userRegister);
 
         String id = UUID.randomUUID().toString();
-        UserRegisterDayEntity entity = new UserRegisterDayEntity(id, day, Long.toString(userRegister));
-        userRegisterDayRepository.save(entity);
+        UsDateEntity entity = new UsDateEntity(id, day, Long.toString(userRegister));
+        usDateRepository.save(entity);
     }
 
     private void updateUserRegistrationMonth(String day, long dailyCount) {
         YearMonth yearMonth = YearMonth.now();
         String month = yearMonth.toString();
 
-        UserRegisterMonthEntity monthEntity = userRegisterMonthRepository.findByMonth(month);
+        UsMonthEntity monthEntity = usMonthRepository.findByMonth(month);
         if (monthEntity == null) {
-            monthEntity = new UserRegisterMonthEntity();
+            monthEntity = new UsMonthEntity();
             monthEntity.setId(UUID.randomUUID().toString());
             monthEntity.setMonth(month);
             monthEntity.setUserCount(String.valueOf(dailyCount));
         } else {
-            monthEntity.setUserCount(monthEntity.getUserCount() + dailyCount);
+            //Long.toString(Long.parseLong(monthEntity.getUserCount()) + count)
+            monthEntity.setUserCount(Long.toString(Long.parseLong(monthEntity.getUserCount()) + dailyCount));
         }
 
-        userRegisterMonthRepository.save(monthEntity);
+        usMonthRepository.save(monthEntity);
         logger.info("Updated monthly user registration statistics for month: " + month + " with total count: " + monthEntity.getUserCount());
-    }
-    private void saveUserRegistrationMonth(String month, String sumUserJson) {
-        logger.info("Saving user registration statistics for month: " + month + " with sumUserJson: " + sumUserJson);
-
-        // Parse user_register from sumUserJson
-        long userRegister = parseUserRegister(sumUserJson);
-        logger.info("Parsed user_register: " + userRegister);
-
-        String id = UUID.randomUUID().toString();
-
-        UserRegisterMonthEntity entity = new UserRegisterMonthEntity(id, month, Long.toString(userRegister));
-        userRegisterMonthRepository.save(entity);
     }
 
     private long parseUserRegister(String sumUserJson) {
@@ -140,8 +108,5 @@ public class ReactiveUserService {
         return Mono.just(Collections.emptyList());
     }
 
-    public Mono<List<User>> fallbackGetRegisteredUsersInMonth(String month, Throwable t) {
-        System.err.println("Fallback method called due to: " + t.getMessage());
-        return Mono.just(Collections.emptyList());
-    }
+
 }

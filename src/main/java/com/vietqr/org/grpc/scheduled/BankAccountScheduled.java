@@ -9,40 +9,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class BankAccountScheduled {
     private static final Logger logger = LoggerFactory.getLogger(BankAccountScheduled.class);
 
-
-    private final ReactiveBankAccountService reactiveBankAccountService;
-    private final AccountBankMonthRepository accountBankMonthRepository;
-
     @Autowired
-    public BankAccountScheduled(ReactiveBankAccountService reactiveBankAccountService, AccountBankMonthRepository accountBankMonthRepository) {
-        this.reactiveBankAccountService = reactiveBankAccountService;
-        this.accountBankMonthRepository = accountBankMonthRepository;
-    }
+    private ReactiveBankAccountService reactiveBankAccountService;
+    @Autowired
+    private AccountBankMonthRepository accountBankMonthRepository;
 
-    //@Scheduled(cron = "0 * * * * ?")
-    @Scheduled(cron = "59 59 23 L * ?") // Chạy vào 23:59 ngày cuối cùng của mỗi tháng
+    @Scheduled(cron = "0 * * * * ?")
+    //@Scheduled(cron = "0 0 0 * * ?") // Chạy vào 00:00 mỗi ngày
     public void syncMonthlyBankAccountStatistics() throws InterruptedException {
-        YearMonth currentMonth  = YearMonth.now();
-        String lastMonthString = currentMonth.toString();
+        YearMonth currentMonth = YearMonth.now();
+        String currentMonthString = currentMonth.toString();
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        String lastMonthString = yesterday.toString().substring(0, 7); // Lấy năm-tháng của ngày hôm trước
 
         reactiveBankAccountService.getBankAccountStatistics(lastMonthString)
                 .subscribe(response -> {
-                    AccountBankMonthEntity entity = new AccountBankMonthEntity();
-                    entity.setId(UUID.randomUUID().toString());
-                    entity.setBankShortName(response.getBankShortName());
-                    entity.setTotalAccounts(response.getTotalAccounts());
-                    entity.setLinkedAccounts(response.getLinkedAccounts());
-                    entity.setUnlinkedAccounts(response.getUnlinkedAccounts());
-                    entity.setTime(lastMonthString);
-                    accountBankMonthRepository.save(entity);
-                    logger.info("Successfully saved bank account statistics for: " + response.getBankShortName());
+                    Optional<AccountBankMonthEntity> optionalEntity = accountBankMonthRepository.findByBankShortNameAndTime(response.getBankShortName(), currentMonthString);
+                    if (optionalEntity.isPresent()) {
+                        AccountBankMonthEntity entity = optionalEntity.get();
+                        entity.setTotalAccounts(response.getTotalAccounts());
+                        entity.setLinkedAccounts(response.getLinkedAccounts());
+                        entity.setUnlinkedAccounts(response.getUnlinkedAccounts());
+                        accountBankMonthRepository.save(entity);
+                        logger.info("Successfully updated bank account statistics for: " + response.getBankShortName());
+                    } else {
+                        AccountBankMonthEntity entity = new AccountBankMonthEntity();
+                        entity.setId(UUID.randomUUID().toString());
+                        entity.setBankShortName(response.getBankShortName());
+                        entity.setTotalAccounts(response.getTotalAccounts());
+                        entity.setLinkedAccounts(response.getLinkedAccounts());
+                        entity.setUnlinkedAccounts(response.getUnlinkedAccounts());
+                        entity.setTime(currentMonthString);
+                        accountBankMonthRepository.save(entity);
+                        logger.info("Successfully saved new bank account statistics for: " + response.getBankShortName());
+                    }
                 }, throwable -> logger.error("Failed to fetch bank account statistics: " + throwable.getMessage()));
     }
 }
