@@ -23,8 +23,8 @@ public class BankAccountScheduled {
     @Autowired
     private AccountBankMonthRepository accountBankMonthRepository;
 
-    @Scheduled(cron = "0 * * * * ?")
-    //@Scheduled(cron = "0 0 0 * * ?") // Chạy vào 00:00 mỗi ngày
+    //@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?") // Chạy vào 00:00 mỗi ngày
     public void syncMonthlyBankAccountStatistics() throws InterruptedException {
         YearMonth currentMonth = YearMonth.now();
         String currentMonthString = currentMonth.toString();
