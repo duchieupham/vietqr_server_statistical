@@ -24,10 +24,13 @@ public class TrMonthEntity {
     @Column(name = "sumMid", columnDefinition = "JSON")
     private String sumMid;
 
+    @Column(name = "sumUser", columnDefinition = "JSON")
+    private String sumUser;
+
     public TrMonthEntity() {
     }
 
-    public TrMonthEntity(String id, String mids, String tids, String trs, String month, String sum, String sumMid) {
+    public TrMonthEntity(String id, String mids, String tids, String trs, String month, String sum, String sumMid, String sumUser) {
         this.id = id;
         this.mids = mids;
         this.tids = tids;
@@ -35,6 +38,7 @@ public class TrMonthEntity {
         this.month = month;
         this.sum = sum;
         this.sumMid = sumMid;
+        this.sumUser = sumUser;
     }
 
     public String getId() {
@@ -91,5 +95,13 @@ public class TrMonthEntity {
 
     public void setTrs(String trs) {
         this.trs = trs;
+    }
+
+    public String getSumUser() {
+        return sumUser;
+    }
+
+    public void setSumUser(String sumUser) {
+        this.sumUser = sumUser;
     }
 }

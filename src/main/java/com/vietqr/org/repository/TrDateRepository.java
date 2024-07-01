@@ -41,4 +41,5 @@ public interface TrDateRepository extends JpaRepository<TrDateEntity, String> {
             + "FROM tr_date "
             + "WHERE date LIKE :time% ", nativeQuery = true)
     ITransAdminSumDTO sumTranSumStatistic(String time);
+
 }
