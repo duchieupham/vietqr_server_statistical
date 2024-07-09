@@ -51,4 +51,35 @@ public class BankAccountClient
         latch.await(1, TimeUnit.MINUTES);
         return responses;
     }
+
+
+    // Phương thức mới không nhận tham số
+    public List<BankAccountStatisticsResponse> getAllBankAccountStatistics() throws InterruptedException {
+        GetBankAccountStatisticsRequest request = GetBankAccountStatisticsRequest.newBuilder().build();
+        CountDownLatch latch = new CountDownLatch(1);
+        List<BankAccountStatisticsResponse> responses = new ArrayList<>();
+
+        bankAccountServiceStub.getBankAccountStatistics(request, new StreamObserver<BankAccountStatisticsResponse>() {
+            @Override
+            public void onNext(BankAccountStatisticsResponse response) {
+                responses.add(response);
+                logger.info("Received bank account statistics: " + response);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                logger.error("Error: ", t);
+                latch.countDown();
+            }
+
+            @Override
+            public void onCompleted() {
+                logger.info("Stream completed");
+                latch.countDown();
+            }
+        });
+
+        latch.await(1, TimeUnit.MINUTES);
+        return responses;
+    }
 }
