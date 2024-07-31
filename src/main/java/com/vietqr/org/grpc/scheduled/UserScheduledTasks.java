@@ -18,7 +18,7 @@ public class UserScheduledTasks {
     @Autowired
     private TrDateService trDateService;
 
-    @Scheduled(cron = "0 * * * * ?")
+    //@Scheduled(cron = "0 * * * * ?")
     //@Scheduled(cron = "0 0 0 * * ?")
     public void syncDailyUserStatistics() {
         String yesterday = LocalDate.now().minusDays(1).toString();
