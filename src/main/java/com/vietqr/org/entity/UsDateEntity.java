@@ -18,6 +18,13 @@ public class UsDateEntity implements Serializable {
     @Column(name = "userCount")
     private String userCount;
 
+    @Column(name = "iosPlatform")
+    private Long iosPlatform;
+    @Column(name = "androidPlatform")
+    private Long androidPlatform;
+    @Column(name = "webPlatform")
+    private Long webPlatform;
+
     public UsDateEntity(String id) {
         this.id = id;
     }
@@ -26,6 +33,15 @@ public class UsDateEntity implements Serializable {
         this.id = id;
         this.day = day;
         this.userCount = userCount;
+    }
+
+    public UsDateEntity(String id, String day, String userCount, Long iosPlatform, Long androidPlatform, Long webPlatform) {
+        this.id = id;
+        this.day = day;
+        this.userCount = userCount;
+        this.iosPlatform = iosPlatform;
+        this.androidPlatform = androidPlatform;
+        this.webPlatform = webPlatform;
     }
 
     public UsDateEntity() {
@@ -54,5 +70,28 @@ public class UsDateEntity implements Serializable {
 
     public void setUserCount(String userCount) {
         this.userCount = userCount;
+    }
+    public Long getIosPlatform() {
+        return iosPlatform;
+    }
+
+    public void setIosPlatform(Long iosPlatform) {
+        this.iosPlatform = iosPlatform;
+    }
+
+    public Long getAndroidPlatform() {
+        return androidPlatform;
+    }
+
+    public void setAndroidPlatform(Long androidPlatform) {
+        this.androidPlatform = androidPlatform;
+    }
+
+    public Long getWebPlatform() {
+        return webPlatform;
+    }
+
+    public void setWebPlatform(Long webPlatform) {
+        this.webPlatform = webPlatform;
     }
 }

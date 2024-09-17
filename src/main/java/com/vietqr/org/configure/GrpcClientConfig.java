@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class GrpcClientConfig {
     @Bean
     public ManagedChannel managedChannel() {
-        return ManagedChannelBuilder.forAddress("localhost", 1000)
+        return ManagedChannelBuilder.forAddress("localhost", 9090)
                 .usePlaintext() // Sử dụng PLAINTEXT
                 .build();
     }
