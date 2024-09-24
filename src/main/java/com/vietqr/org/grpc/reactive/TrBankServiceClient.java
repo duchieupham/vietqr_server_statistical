@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -21,19 +23,19 @@ public class TrBankServiceClient {
         this.asyncStub = TrBankServiceGrpc.newStub(channel);
     }
 
-    public TBank getTrBank(long startDate, long endDate) throws InterruptedException {
+    public List<TBank> getTrBank(long startDate, long endDate) throws InterruptedException {
         GetTrBankRequest request = GetTrBankRequest.newBuilder()
                 .setStartDate(startDate)
                 .setEndDate(endDate)
                 .build();
 
         CountDownLatch latch = new CountDownLatch(1);
-        final TBank[] response = new TBank[1];
+        final List<TBank> responses = new ArrayList<>();
 
         asyncStub.getTrBank(request, new StreamObserver<TBank>() {
             @Override
             public void onNext(TBank tBank) {
-                response[0] = tBank;
+                responses.add(tBank);
                 logger.info("Received response: {}", tBank);
             }
 
@@ -51,7 +53,7 @@ public class TrBankServiceClient {
         });
 
         latch.await(1, TimeUnit.MINUTES);
-        return response[0];
+        return responses;
     }
 }
 

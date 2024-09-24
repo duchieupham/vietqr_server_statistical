@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,21 +36,23 @@ public class TrBankScheduledTasks {
             long startDate = getStartDate();
             long endDate = getEndDate();
             logger.info("Syncing data from {} to {}", startDate, endDate);
-            TBank tBank = trBankServiceClient.getTrBank(startDate, endDate);
+            List<TBank> trBankList = trBankServiceClient.getTrBank(startDate, endDate);
 
-            if (tBank != null) {
-                TrBankEntity entity = new TrBankEntity(
-                        UUID.randomUUID().toString(),
-                        LocalDateTime.now(ZoneOffset.UTC).getYear(),
-                        LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM")),
-                        LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE),
-                        tBank.getBankShortName(),
-                        tBank.getTotalNumberCredits(),
-                        tBank.getTotalAmountCredits(),
-                        tBank.getTotalAmountRecon(),
-                        tBank.getTotalNumberRecon()
-                );
-                trBankRepository.save(entity);
+            if (trBankList != null && !trBankList.isEmpty()) {
+                for (TBank tBank : trBankList) {
+                    TrBankEntity entity = new TrBankEntity(
+                            UUID.randomUUID().toString(),
+                            LocalDateTime.now(ZoneOffset.UTC).getYear(),
+                            LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM")),
+                            LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE),
+                            tBank.getBankShortName(),
+                            tBank.getTotalNumberCredits(),
+                            tBank.getTotalAmountCredits(),
+                            tBank.getTotalAmountRecon(),
+                            tBank.getTotalNumberRecon()
+                    );
+                    trBankRepository.save(entity);
+                }
                 logger.info("Data synced successfully");
             } else {
                 logger.warn("No data received from TrBankServiceClient");

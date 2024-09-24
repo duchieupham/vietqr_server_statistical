@@ -25,8 +25,8 @@ public class TrSysScheduledTasks {
 
     @Autowired
     private TrSysRepository trSysRepository;
-
-    @Scheduled(cron = "0 0 21 * * ?")
+    @Scheduled(cron = "0 * * * * ?")
+//    @Scheduled(cron = "0 0 21 * * ?")
     @Transactional
     public void syncData() {
         try {
