@@ -29,4 +29,22 @@ public class ReactiveBankAccountService {
         System.err.println("Fallback method called due to: " + t.getMessage());
         return Flux.empty();
     }
+
+
+    // Phương thức mới không nhận tham số
+    @CircuitBreaker(name = "bankAccountService", fallbackMethod = "fallbackGetAllBankAccountStatistics")
+    @RateLimiter(name = "bankAccountService")
+    public Flux<BankAccountStatisticsResponse> getAllBankAccountStatistics() throws InterruptedException {
+        return Flux.fromIterable(bankAccountClient.getAllBankAccountStatistics())
+                .subscribeOn(Schedulers.boundedElastic())
+                .onErrorResume(throwable -> {
+                    System.err.println("Error occurred: " + throwable.getMessage());
+                    return Flux.empty();
+                });
+    }
+
+    public Flux<BankAccountStatisticsResponse> fallbackGetAllBankAccountStatistics(Throwable t) {
+        System.err.println("Fallback method called due to: " + t.getMessage());
+        return Flux.empty();
+    }
 }
