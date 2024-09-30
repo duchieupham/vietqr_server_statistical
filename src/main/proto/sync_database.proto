@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.vietqr.org.grpc";
+option java_outer_classname = "DataSyncProto";
+
+service DataSyncService {
+  rpc SyncData (DataRequest) returns (DataResponse);
+}
+
+message DataRequest {
+  string data = 1;
+}
+
+message DataResponse {
+  string status = 1;
+}
