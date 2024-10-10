@@ -29,8 +29,8 @@ public class BankAccountScheduled {
     @Autowired
     private AccountBankRepository accountBankRepository;
 
-    @Scheduled(cron = "0 * * * * ?")
-    //@Scheduled(cron = "0 0 0 * * ?") // Chạy vào 00:00 mỗi ngày
+    //@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?") // Chạy vào 00:00 mỗi ngày
     public void syncMonthlyBankAccountStatistics() throws InterruptedException {
         YearMonth currentMonth = YearMonth.now();
         String currentMonthString = currentMonth.toString();
@@ -61,7 +61,8 @@ public class BankAccountScheduled {
                 }, throwable -> logger.error("Failed to fetch bank account statistics: " + throwable.getMessage()));
     }
 
-    @Scheduled(cron = "0 * * * * ?")
+    //@Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void syncDailyBankAccountStatistics() throws InterruptedException {
         reactiveBankAccountService.getAllBankAccountStatistics()
                 .subscribe(response -> {
